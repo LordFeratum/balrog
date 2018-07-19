@@ -50,4 +50,4 @@ class OnMemoryRepository:
         return self._resources
 
     def get_policy(self, role, operation, resource):
-        return self._policies.get(role, {}).get(operation, {}).get(resource)
+        return self._policies.get((role, operation, resource))
