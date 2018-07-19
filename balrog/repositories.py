@@ -35,9 +35,7 @@ class OnMemoryRepository:
             msg = "Resource '{}' not found.".format(resource)
             raise ResourceNotFoundException(msg)
 
-        self._policies.setdefault(role, {})\
-                      .setdefault(operation, {})\
-                      .setdefault(resource, allowance)
+        self._policies[role, operation, resource] = allowance
 
     def get_roles(self):
         return self._roles.keys()
