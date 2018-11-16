@@ -1,8 +1,14 @@
+import re
+
 from balrog.exceptions import (
     RoleNotFoundException,
     ResourceNotFoundException,
     OperationNotFoundException,
 )
+
+
+def get_resource_regex(resource):
+    return '^{}$'.format(resource)
 
 
 class OnMemoryRepository:
@@ -35,7 +41,8 @@ class OnMemoryRepository:
             msg = "Resource '{}' not found.".format(resource)
             raise ResourceNotFoundException(msg)
 
-        self._policies[role, operation, resource] = allowance
+        self._policies.setdefault((role, operation), [])
+        self._policies[(role, operation)].append((resource, allowance))
 
     def get_roles(self):
         return self._roles.keys()
@@ -50,4 +57,16 @@ class OnMemoryRepository:
         return self._resources
 
     def get_policy(self, role, operation, resource):
-        return self._policies.get((role, operation, resource))
+        found = False
+        resources = self._policies.get((role, operation), [])
+        for resource_regex, allowance in resources:
+            p = re.compile(get_resource_regex(resource_regex), re.IGNORECASE)
+            if p.match(resource) is not None:
+                found = True
+                if allowance is False:
+                    return False
+        
+        if found:
+            return True
+
+        return None

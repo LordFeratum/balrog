@@ -6,7 +6,6 @@ from balrog.exceptions import PermissionDenied
 
 
 
-
 class Balrog:
     def __init__(self, repository=None, default=None):
         self._default = default
@@ -29,8 +28,8 @@ class Balrog:
         queue = []
         queue.append(role)
         repeated.append(role)
-
-        while len(queue) > 0 :
+        
+        while len(queue) > 0:
             _role = queue.pop(0)
             policy = self._repository.get_policy(_role, operation, resource)
             if policy is None:
@@ -67,6 +66,7 @@ class IdentityContext:
                 return value
 
         return self._balrog._default
+
 
 class Context:
     def __init__(self, checker, exception=Exception, **exc_kwargs):
